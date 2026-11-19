@@ -57,8 +57,8 @@ jobs:
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - run: cargo test --workspace --locked
 
-  security:
-    name: Security (secret scan / dependency audit / licenses)
+  secret-scan:
+    name: Secret scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -77,6 +77,16 @@ jobs:
           tar -xzf "${file}" gitleaks
       - name: Secret scan (full git history)
         run: ./gitleaks git --config .gitleaks.toml --redact --verbose .
+
+  # 新しい脆弱性情報の公開で、PR と無関係に失敗することがある。
+  # そのためブランチ保護の必須チェックには含めず、結果を見て個別に対応する。
+  dependency-audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: taiki-e/install-action@75a7c0f87bd666af3cdb75c5b9e9d03ab6044e6f # v2.90.6
         with:
           tool: cargo-audit,cargo-deny
