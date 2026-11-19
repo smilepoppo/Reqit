@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Reqit のメインウィンドウに必要な最小限の権限",
+  "windows": ["main"],
+  "permissions": [
+    "allow-send-request",
+    "allow-cancel-request",
+    "allow-load-last-request",
+    "allow-save-last-request"
+  ]
+}

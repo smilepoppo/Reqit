@@ -1,0 +1,25 @@
+[package]
+name = "reqit-core"
+description = "Reqit の HTTP 通信エンジンと共通データモデル"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+publish = false
+
+[dependencies]
+reqwest = { version = "0.13", default-features = false, features = ["default-tls", "http2", "charset", "system-proxy"] }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+url = "2"
+
+[dev-dependencies]
+wiremock = "0.6"
+tempfile = "3"
+rcgen = "0.14"
+tokio-rustls = { version = "0.26", default-features = false, features = ["aws_lc_rs"] }

@@ -1,0 +1,105 @@
+# ============================================================
+# Reqit .gitignore（公開リポジトリ向け）
+# 注意：.gitignore は既にコミットされたファイルを除外しません。
+# ============================================================
+
+# --- Node.js / フロントエンド ---
+node_modules/
+dist/
+dist-ssr/
+build/
+coverage/
+.vite/
+*.tsbuildinfo
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# --- Rust / Tauri ---
+target/
+src-tauri/target/
+src-tauri/gen/schemas/
+# ※ Cargo.lock / pnpm-lock.yaml はアプリの再現性のため管理対象にする
+
+# --- 環境変数・ローカル設定 ---
+.env
+.env.*
+!.env.example
+*.local
+
+# --- エディタ・IDE ---
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+.idea/
+*.swp
+*.swo
+*~
+.history/
+
+# --- OS 固有 ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- ログ・一時ファイル ---
+logs/
+*.log
+tmp/
+temp/
+*.tmp
+*.bak
+
+# --- ローカル実データ（通信履歴・キャプチャ・DB） ---
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.har
+captures/
+history/
+reqit-data/
+last-request.json
+
+# --- 認証情報・秘密鍵・署名 ---
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.snk
+*.cer
+*.crt
+*.spc
+*.pvk
+id_rsa*
+id_ed25519*
+credentials.json
+secrets.json
+*.secret
+*.secrets
+.tauri/*.key
+tauri-signing*.key
+
+# --- ローカルで生成したインストーラー ---
+*.msi
+*.msix
+*.appx
+*.exe
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+
+# --- テスト実行時の一時データ ---
+test-results/
+playwright-report/
+.test-tmp/

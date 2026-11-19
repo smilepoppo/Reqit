@@ -1,0 +1,18 @@
+# Changelog
+
+このプロジェクトの主な変更を記録します。形式は [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) に、バージョン番号は [Semantic Versioning](https://semver.org/lang/ja/) に従います。
+
+## [Unreleased]
+
+### 追加
+
+- v0.1 API テスター
+  - GET / POST / PUT / PATCH / DELETE の送信
+  - クエリパラメーター（URL 欄と表が連動）、ヘッダー、ボディ（JSON / テキスト）の編集
+  - Basic 認証、Bearer トークン
+  - ステータス、ヘッダー、整形表示（JSON 構文ハイライト）、Raw 表示、応答時間、サイズの表示
+  - 通信エラーと HTTP ステータスに応じたヒントの日本語表示
+  - 送信中のキャンセル、タイムアウト設定
+  - 前回入力の自動復元（秘密情報は Windows 資格情報マネージャーに保存）
+  - ダーク / ライトモード、日本語 / 英語 UI、キーボードショートカット
+- CI（型チェック、ESLint、Prettier、Vitest、cargo fmt / clippy / test、シークレットスキャン、依存ライブラリの検査、Windows ビルド、E2E スモークテスト）

@@ -1,0 +1,14 @@
+# gitleaks 設定。既定ルールを使い、テスト用のダミー値だけを許可リストに入れる。
+[extend]
+useDefault = true
+
+[allowlist]
+description = "テストとドキュメントのダミー値"
+paths = [
+  '''pnpm-lock\.yaml''',
+  '''Cargo\.lock''',
+]
+regexes = [
+  '''dummy-[a-z0-9-]+''',
+  '''example-token-[a-z0-9]+''',
+]

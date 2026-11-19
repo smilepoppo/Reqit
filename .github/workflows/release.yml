@@ -1,0 +1,45 @@
+name: Release
+
+# v*.*.* のタグを push したときだけ実行する。タグを作れるのはメンテナーのみ。
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release-windows:
+    name: Build and draft GitHub Release (Windows)
+    runs-on: windows-latest
+    # GitHub の Environment「release」で、承認者や利用可能なブランチ・タグを制限する。
+    environment: release
+    permissions:
+      contents: write # GitHub Release の下書き作成に必要
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
+        with:
+          toolchain: stable
+      - uses: pnpm/action-setup@9bbca1e9dc2902adb87e8780fe5c98796985a62d # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: cargo test --workspace --locked
+      - uses: tauri-apps/tauri-action@2d793bf2c8c505b9b76211601b09aab48922225d # v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # コード署名を導入する場合は、Environment「release」の Secrets に登録して参照する。
+          # TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          # TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: Reqit ${{ github.ref_name }}
+          releaseBody: "CHANGELOG.md を参照してください。 / See CHANGELOG.md."
+          releaseDraft: true
+          prerelease: false
