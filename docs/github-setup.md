@@ -63,6 +63,59 @@ Reqit を公開 OSS として運営するための GitHub 設定です。設定�
 
 `release.yml` は Environment `release` を参照しています。初回のリリース前に、Settings → Environments で `release` を作り、承認者（Required reviewers）にメンテナーを設定してください（下記の段階 3 に API 手順あり）。
 
+## 段階 0：準備（最初のログイン）
+
+Windows 11 で初めて GitHub CLI を使う場合の手順です。最初の 1 回だけ行います。
+
+### 0-1. Git と GitHub CLI をインストールする（PowerShell）
+
+```powershell
+winget install --id Git.Git -e
+winget install --id GitHub.cli -e
+```
+
+インストール後は PowerShell を閉じます。
+
+### 0-2. Git Bash を開いて、作業用フォルダーに移動する
+
+この文書のコマンドは bash の書き方のため、PowerShell ではそのまま動きません。スタートメニューで「Git Bash」を開き、以降はすべて Git Bash で実行します。変更前の値を控えるファイル（`before.json`）がリポジトリに混ざらないよう、専用の作業フォルダーを使います。
+
+```sh
+gh --version
+mkdir -p ~/reqit-github-setup && cd ~/reqit-github-setup
+```
+
+### 0-3. GitHub にログインする
+
+```sh
+gh auth login
+```
+
+| 質問                                                             | 選ぶもの                   |
+| ---------------------------------------------------------------- | -------------------------- |
+| Where do you use GitHub?                                         | `GitHub.com`               |
+| What is your preferred protocol for Git operations on this host? | `HTTPS`                    |
+| Authenticate Git with your GitHub credentials?                   | `Yes`                      |
+| How would you like to authenticate GitHub CLI?                   | `Login with a web browser` |
+
+1. 表示された 8 桁のワンタイムコード（`XXXX-XXXX`）を控える
+2. `Enter` を押してブラウザーを開く
+3. smilepoppo でサインインし、コードを入力して「Continue」を押す
+4. 「Authorize github」を押す
+5. Git Bash に「Logged in as smilepoppo」と表示されれば完了
+
+表示の文言は gh のバージョンによって少し異なる場合があります。
+
+### 0-4. ログインを確認する
+
+```sh
+gh auth status
+gh api user --jq .login                               # smilepoppo と表示されること
+gh api repos/smilepoppo/Reqit --jq .permissions.admin  # true と表示されること
+```
+
+別のアカウントが表示された場合や `false` の場合は、`gh auth logout` してから 0-3 をやり直します。
+
 ## 段階 1：push 前に実行するコマンド
 
 ```sh
