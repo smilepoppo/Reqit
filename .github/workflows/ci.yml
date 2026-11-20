@@ -106,7 +106,9 @@ jobs:
 
   e2e-linux:
     name: E2E smoke test (real app via WebDriver, Linux)
-    runs-on: ubuntu-latest
+    # ubuntu-latest（26.04）では webkit2gtk-driver が改名されており、tauri-driver が
+    # 前提とする WebKitWebDriver の導入方法が変わっている。動作実績のある 24.04 に固定する。
+    runs-on: ubuntu-24.04
     needs: [frontend, rust]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
