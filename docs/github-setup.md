@@ -67,27 +67,29 @@ Reqit を公開 OSS として運営するための GitHub 設定です。設定�
 
 Windows 11 で初めて GitHub CLI を使う場合の手順です。最初の 1 回だけ行います。
 
-### 0-1. Git と GitHub CLI をインストールする（PowerShell）
+この文書のコマンドは、すべて **PowerShell**（Windows 標準の 5.1、および 7 系）で実行できるように書いています。Windows PowerShell 5.1 で動かない書き方（`&&`、引数の中の二重引用符）は使っていません。
+
+### 0-1. GitHub CLI をインストールする
 
 ```powershell
-winget install --id Git.Git -e
 winget install --id GitHub.cli -e
 ```
 
-インストール後は PowerShell を閉じます。
+インストール後は PowerShell を閉じて、開き直します。
 
-### 0-2. Git Bash を開いて、作業用フォルダーに移動する
+### 0-2. 作業用フォルダーに移動する
 
-この文書のコマンドは bash の書き方のため、PowerShell ではそのまま動きません。スタートメニューで「Git Bash」を開き、以降はすべて Git Bash で実行します。変更前の値を控えるファイル（`before.json`）がリポジトリに混ざらないよう、専用の作業フォルダーを使います。
+変更前の値を控えるファイル（`before.json`）がリポジトリに混ざらないよう、専用のフォルダーで作業します。
 
-```sh
+```powershell
 gh --version
-mkdir -p ~/reqit-github-setup && cd ~/reqit-github-setup
+New-Item -ItemType Directory -Force -Path "$HOME\reqit-github-setup" | Out-Null
+Set-Location "$HOME\reqit-github-setup"
 ```
 
 ### 0-3. GitHub にログインする
 
-```sh
+```powershell
 gh auth login
 ```
 
@@ -102,15 +104,15 @@ gh auth login
 2. `Enter` を押してブラウザーを開く
 3. smilepoppo でサインインし、コードを入力して「Continue」を押す
 4. 「Authorize github」を押す
-5. Git Bash に「Logged in as smilepoppo」と表示されれば完了
+5. PowerShell に「Logged in as smilepoppo」と表示されれば完了
 
 表示の文言は gh のバージョンによって少し異なる場合があります。
 
-### 0-4. ログインを確認する
+### 0-4. ログインを確認する（読み取りのみ）
 
-```sh
+```powershell
 gh auth status
-gh api user --jq .login                               # smilepoppo と表示されること
+gh api user --jq .login                                # smilepoppo と表示されること
 gh api repos/smilepoppo/Reqit --jq .permissions.admin  # true と表示されること
 ```
 
@@ -118,33 +120,34 @@ gh api repos/smilepoppo/Reqit --jq .permissions.admin  # true と表示される
 
 ## 段階 1：push 前に実行するコマンド
 
-```sh
-OWNER=smilepoppo
-REPO=Reqit
+同じ PowerShell の画面で、上から順に実行します。開き直した場合は「0」からやり直します。
 
-# 0. 認証と現状の確認（変更前の値を控えておく）
-gh auth status
-gh api "repos/$OWNER/$REPO" --jq '{name, visibility, default_branch, has_issues, has_discussions, has_wiki, has_projects, allow_squash_merge, allow_merge_commit, allow_rebase_merge, delete_branch_on_merge, topics, security_and_analysis}' | tee before.json
+```powershell
+# 0. 対象の指定と、変更前の値の控え
+Set-Location "$HOME\reqit-github-setup"
+$OWNER = 'smilepoppo'
+$REPO = 'Reqit'
+gh api "repos/$OWNER/$REPO" --jq '{name, visibility, default_branch, has_issues, has_discussions, has_wiki, has_projects, allow_squash_merge, allow_merge_commit, allow_rebase_merge, delete_branch_on_merge, topics, security_and_analysis}' | Tee-Object -FilePath before.json
 
 # 1. リポジトリの基本設定
-gh api -X PATCH "repos/$OWNER/$REPO" \
-  -F has_issues=true -F has_discussions=true -F has_wiki=false -F has_projects=false \
-  -F allow_squash_merge=true -F allow_merge_commit=false -F allow_rebase_merge=false \
-  -F delete_branch_on_merge=true \
+gh api -X PATCH "repos/$OWNER/$REPO" `
+  -F has_issues=true -F has_discussions=true -F has_wiki=false -F has_projects=false `
+  -F allow_squash_merge=true -F allow_merge_commit=false -F allow_rebase_merge=false `
+  -F delete_branch_on_merge=true `
   -f squash_merge_commit_title=PR_TITLE -f squash_merge_commit_message=PR_BODY
 
 # 2. Topics
-gh api -X PUT "repos/$OWNER/$REPO/topics" \
-  -f 'names[]=api-client' -f 'names[]=api-testing' -f 'names[]=api-debugging' \
-  -f 'names[]=tauri' -f 'names[]=rust' -f 'names[]=windows'
+gh api -X PUT "repos/$OWNER/$REPO/topics" `
+  -f "names[]=api-client" -f "names[]=api-testing" -f "names[]=api-debugging" `
+  -f "names[]=tauri" -f "names[]=rust" -f "names[]=windows"
 
 # 3. Secret scanning と Push protection
-gh api -X PATCH "repos/$OWNER/$REPO" --input - <<'JSON'
+@'
 {"security_and_analysis": {
   "secret_scanning": {"status": "enabled"},
   "secret_scanning_push_protection": {"status": "enabled"}
 }}
-JSON
+'@ | gh api -X PATCH "repos/$OWNER/$REPO" --input -
 
 # 4. Dependabot alerts / security updates、Private vulnerability reporting
 gh api -X PUT "repos/$OWNER/$REPO/vulnerability-alerts"
@@ -152,34 +155,37 @@ gh api -X PUT "repos/$OWNER/$REPO/automated-security-fixes"
 gh api -X PUT "repos/$OWNER/$REPO/private-vulnerability-reporting"
 
 # 5. Actions：GITHUB_TOKEN を読み取り専用にし、Actions による PR 承認を禁止する
-gh api -X PUT "repos/$OWNER/$REPO/actions/permissions/workflow" \
+gh api -X PUT "repos/$OWNER/$REPO/actions/permissions/workflow" `
   -f default_workflow_permissions=read -F can_approve_pull_request_reviews=false
 
 # 6. Actions：外部コントリビューターの PR は、ワークフロー実行前に毎回承認する
-gh api -X PUT "repos/$OWNER/$REPO/actions/permissions/fork-pr-contributor-approval" \
+gh api -X PUT "repos/$OWNER/$REPO/actions/permissions/fork-pr-contributor-approval" `
   -f approval_policy=all_external_contributors
 ```
 
 ### 段階 1 の検証
 
-```sh
+```powershell
 gh api "repos/$OWNER/$REPO" --jq '{has_issues, has_discussions, has_wiki, has_projects, allow_squash_merge, allow_merge_commit, allow_rebase_merge, delete_branch_on_merge, topics, security_and_analysis}'
-gh api "repos/$OWNER/$REPO/vulnerability-alerts" --silent && echo "Dependabot alerts: enabled"   # 無効なら 404
-gh api "repos/$OWNER/$REPO/automated-security-fixes"                                          # {"enabled": true, ...}
-gh api "repos/$OWNER/$REPO/private-vulnerability-reporting"                                   # {"enabled": true}
+gh api "repos/$OWNER/$REPO/vulnerability-alerts" --silent
+if ($LASTEXITCODE -eq 0) { 'Dependabot alerts: enabled' } else { 'Dependabot alerts: disabled' }
+gh api "repos/$OWNER/$REPO/automated-security-fixes"
+gh api "repos/$OWNER/$REPO/private-vulnerability-reporting"
 gh api "repos/$OWNER/$REPO/actions/permissions/workflow"
 gh api "repos/$OWNER/$REPO/actions/permissions/fork-pr-contributor-approval"
 ```
 
 ## 段階 3：push 後に実行するコマンド
 
+新しく PowerShell を開いた場合は、先に `$OWNER = 'smilepoppo'` と `$REPO = 'Reqit'` を実行します。
+
 ### 3-1. CI のチェック名を確認する
 
 PR の CI が一度完了してから実行します。
 
-```sh
-SHA=$(gh api "repos/$OWNER/$REPO/branches/claude/reqit-oss-development-fpj1vj" --jq .commit.sha)
-gh api "repos/$OWNER/$REPO/commits/$SHA/check-runs" --jq '.check_runs[] | "\(.name)\t\(.conclusion)"'
+```powershell
+$SHA = gh api "repos/$OWNER/$REPO/branches/claude/reqit-oss-development-fpj1vj" --jq .commit.sha
+gh api "repos/$OWNER/$REPO/commits/$SHA/check-runs" --jq '.check_runs[] | [.name, .conclusion] | @tsv'
 ```
 
 想定するチェック名（`ci.yml` の各ジョブの `name`）：
@@ -197,8 +203,8 @@ gh api "repos/$OWNER/$REPO/commits/$SHA/check-runs" --jq '.check_runs[] | "\(.na
 
 ### 3-2. `main` のブランチ保護
 
-```sh
-gh api -X PUT "repos/$OWNER/$REPO/branches/main/protection" --input - <<'JSON'
+```powershell
+@'
 {
   "required_status_checks": {
     "strict": false,
@@ -220,38 +226,37 @@ gh api -X PUT "repos/$OWNER/$REPO/branches/main/protection" --input - <<'JSON'
   "allow_force_pushes": false,
   "allow_deletions": false
 }
-JSON
+'@ | gh api -X PUT "repos/$OWNER/$REPO/branches/main/protection" --input -
 ```
 
 - `required_approving_review_count: 0`：個人開発のため、他者の承認は必須にしない（PR は必須）
-- `enforce_admins: true`：管理者にも適用する。緊急時は一時的に `DELETE .../protection/enforce_admins` で外し、作業後に戻す
+- `enforce_admins: true`：管理者にも適用する。緊急時だけ一時的に外し、作業後に戻す
 - `strict: false`：PR のブランチを最新の `main` に追従させることは必須にしない（依存更新の PR が滞らないようにするため）
 
 ### 3-3. Code scanning（CodeQL 既定構成）
 
 `main` に Reqit のコードがマージされてから実行します。
 
-```sh
-gh api -X PATCH "repos/$OWNER/$REPO/code-scanning/default-setup" \
+```powershell
+gh api -X PATCH "repos/$OWNER/$REPO/code-scanning/default-setup" `
   -f state=configured -f query_suite=default
 ```
 
 ### 3-4. リリース用 Environment
 
-```sh
-# 承認者に自分を設定する（USER_ID は gh api user --jq .id で確認）
-USER_ID=$(gh api user --jq .id)
-gh api -X PUT "repos/$OWNER/$REPO/environments/release" --input - <<JSON
+```powershell
+$USER_ID = gh api user --jq .id
+@"
 {"reviewers": [{"type": "User", "id": $USER_ID}],
  "deployment_branch_policy": {"protected_branches": false, "custom_branch_policies": true}}
-JSON
-gh api -X POST "repos/$OWNER/$REPO/environments/release/deployment-branch-policies" \
-  -f name='v*.*.*' -f type=tag
+"@ | gh api -X PUT "repos/$OWNER/$REPO/environments/release" --input -
+gh api -X POST "repos/$OWNER/$REPO/environments/release/deployment-branch-policies" `
+  -f "name=v*.*.*" -f type=tag
 ```
 
 ### 段階 3 の検証
 
-```sh
+```powershell
 gh api "repos/$OWNER/$REPO/branches/main/protection" --jq '{checks: .required_status_checks.contexts, strict: .required_status_checks.strict, enforce_admins: .enforce_admins.enabled, reviews: .required_pull_request_reviews.required_approving_review_count, conversation: .required_conversation_resolution.enabled, force_push: .allow_force_pushes.enabled, deletions: .allow_deletions.enabled}'
 gh api "repos/$OWNER/$REPO/code-scanning/default-setup" --jq '{state, languages}'
 gh api "repos/$OWNER/$REPO/environments/release" --jq '{name, protection_rules}'
@@ -259,11 +264,11 @@ gh api "repos/$OWNER/$REPO/environments/release" --jq '{name, protection_rules}'
 
 ## 任意：リポジトリ名の変更
 
-リポジトリ名を `reqit` にする場合だけ実行します。旧 URL は GitHub が自動で転送しますが、README などのリンクも合わせて更新してください。
+リポジトリ名を `reqit` にする場合だけ実行します。旧 URL は GitHub が自動で転送しますが、README などのリンクも合わせて更新してください。手元に clone がある場合は、その中で 2 行目も実行します。
 
-```sh
+```powershell
 gh api -X PATCH "repos/$OWNER/Reqit" -f name=reqit
-git remote set-url origin https://github.com/$OWNER/reqit.git
+git remote set-url origin "https://github.com/$OWNER/reqit.git"
 ```
 
 ## Git 履歴の機密情報チェック
