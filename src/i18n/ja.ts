@@ -6,6 +6,12 @@ export const ja = {
   "app.notTauri":
     "ブラウザ上で実行しています。通信機能を使うには、デスクトップアプリ（pnpm tauri dev）で起動してください。",
 
+  "about.licenses": "ライセンス",
+  "about.licensesTitle": "サードパーティのライセンス",
+  "about.close": "閉じる",
+  "about.licensesDev":
+    "開発モードでは表示できません。pnpm licenses:generate で生成したあと、pnpm tauri build でビルドしたアプリで確認してください。",
+
   "theme.label": "テーマ",
   "theme.system": "OSに合わせる",
   "theme.light": "ライト",

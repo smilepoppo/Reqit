@@ -19,6 +19,8 @@ export default defineConfig({
   build: {
     target: "es2022",
     sourcemap: false,
+    // WebView2 は modulepreload に対応しているため、補助コード（polyfill）を同梱しない。
+    modulePreload: { polyfill: false },
     chunkSizeWarningLimit: 1024,
   },
   test: {

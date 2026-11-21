@@ -37,6 +37,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 pnpm secrets:scan            # gitleaks（要インストール）
 cargo audit && cargo deny check licenses bans sources
+pnpm licenses:generate       # サードパーティのライセンス一覧を生成（要 cargo-about）
 ```
 
 ## 開発規約
@@ -45,7 +46,7 @@ cargo audit && cargo deny check licenses bans sources
 - 小さな単位で実装し、実装後に必ずテストする
 - ビルドエラー、テスト失敗、clippy・ESLint の警告を放置しない
 - セキュリティ上の問題を見つけたら隠さずに報告する。修正できない場合も記録する
-- 不要な依存ライブラリを追加しない。追加する場合は理由とライセンスを説明する
+- 不要な依存ライブラリを追加しない。追加する場合は理由とライセンスを説明し、`cargo deny` と `pnpm licenses:generate` が通ることを確認する
 - 秘密情報をリポジトリに含めない（下記「秘密情報」を参照）
 - コミットメッセージや PR の説明には、変更理由を明確に書く
 - 大きな仕様変更、ファイル削除、外部操作（push、公開設定の変更、リリース公開）は事前に確認する

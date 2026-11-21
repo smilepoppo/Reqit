@@ -113,4 +113,6 @@ Architecture: [docs/architecture.md](docs/architecture.md) (Japanese). Roadmap a
 
 ## License
 
-[MIT License](LICENSE)
+Reqit is released under the [MIT License](LICENSE).
+
+License texts of the open source software used by Reqit are available from "Licenses" at the top right of the app, and as `THIRD_PARTY_LICENSES.html` in each release.

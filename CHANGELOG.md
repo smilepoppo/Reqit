@@ -17,5 +17,6 @@
   - ダーク / ライトモード、日本語 / 英語 UI、キーボードショートカット
 - リリース用ワークフロー：タグとアプリのバージョンの一致確認、SBOM（SPDX 形式）と SHA256 チェックサムの添付
 - README：インストール方法、SmartScreen の警告への対処、ダウンロードしたファイルの検証方法
+- サードパーティのライセンス一覧（アプリの「ライセンス」から表示。リリースにも THIRD_PARTY_LICENSES.html として添付）
 - 行動規範（Contributor Covenant 2.1 を採用。報告は GitHub の非公開フォームで受け付け）
 - CI（型チェック、ESLint、Prettier、Vitest、cargo fmt / clippy / test、シークレットスキャン、依存ライブラリの検査、Windows ビルド、E2E スモークテスト）

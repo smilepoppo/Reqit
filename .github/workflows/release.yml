@@ -45,6 +45,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
       - run: cargo test --workspace --locked
+      - uses: taiki-e/install-action@75a7c0f87bd666af3cdb75c5b9e9d03ab6044e6f # v2.90.6
+        with:
+          tool: cargo-about
+      # ライセンス一覧の同梱は配布の条件のため、生成に失敗したらリリースを止める
+      - name: Generate third-party licenses
+        run: pnpm licenses:generate
       - uses: tauri-apps/tauri-action@2d793bf2c8c505b9b76211601b09aab48922225d # v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -64,6 +70,7 @@ jobs:
             - 署名はまだありません。SmartScreen の警告が出た場合は README の「インストール」を参照してください。
             - `SHA256SUMS.txt`：ダウンロードしたファイルの検証用
             - `reqit-${{ github.ref_name }}.spdx.json`：SBOM（使用しているライブラリの一覧、SPDX 形式）
+            - `THIRD_PARTY_LICENSES.html`：同梱しているサードパーティのライセンス文（アプリ内の「ライセンス」からも表示できます）
           releaseDraft: true
           prerelease: false
 
@@ -79,5 +86,6 @@ jobs:
           mkdir -p release-extra
           gh api "repos/${GITHUB_REPOSITORY}/dependency-graph/sbom" --jq .sbom > "release-extra/reqit-${TAG}.spdx.json"
           cp target/release/bundle/nsis/*.exe target/release/bundle/msi/*.msi release-extra/
+          cp public/third-party-licenses.html release-extra/THIRD_PARTY_LICENSES.html
           (cd release-extra && sha256sum -- * > SHA256SUMS.txt && cat SHA256SUMS.txt)
-          gh release upload "$TAG" "release-extra/reqit-${TAG}.spdx.json" release-extra/SHA256SUMS.txt --clobber
+          gh release upload "$TAG" "release-extra/reqit-${TAG}.spdx.json" release-extra/THIRD_PARTY_LICENSES.html release-extra/SHA256SUMS.txt --clobber

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { LicensesDialog } from "./components/LicensesDialog";
 import { RequestBar } from "./components/RequestBar";
 import { RequestPanel } from "./components/RequestPanel";
 import { ResponsePanel } from "./components/ResponsePanel";
@@ -18,6 +19,8 @@ export default function App() {
   const { draft, update, secretStatus } = usePersistentDraft();
   const { state, send, cancel, sending } = useRequestRunner();
   const urlRef = useRef<HTMLInputElement>(null);
+  const [showLicenses, setShowLicenses] = useState(false);
+  const closeLicenses = useCallback(() => setShowLicenses(false), []);
 
   const doSend = useCallback(() => {
     void send(draftToSpec(draft));
@@ -51,6 +54,13 @@ export default function App() {
         <h1 className="text-base font-semibold tracking-tight">Reqit</h1>
         <span className="hidden text-xs text-slate-500 sm:inline">{t("app.tagline")}</span>
         <div className="ml-auto flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowLicenses(true)}
+            className="rounded px-1.5 py-0.5 text-xs text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            {t("about.licenses")}
+          </button>
           <label className="flex items-center gap-1 text-xs text-slate-500">
             <span className="sr-only">{t("lang.label")}</span>
             <select
@@ -103,6 +113,7 @@ export default function App() {
           <ResponsePanel state={state} dark={dark} />
         </div>
       </main>
+      {showLicenses && <LicensesDialog onClose={closeLicenses} />}
     </div>
   );
 }

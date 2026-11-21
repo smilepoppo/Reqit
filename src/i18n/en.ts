@@ -4,6 +4,12 @@ export const en: Record<keyof typeof ja, string> = {
   "app.tagline": "Send. Inspect. Debug.",
   "app.notTauri": "Running in a browser. Start the desktop app (pnpm tauri dev) to send requests.",
 
+  "about.licenses": "Licenses",
+  "about.licensesTitle": "Third-party licenses",
+  "about.close": "Close",
+  "about.licensesDev":
+    "Not available in development mode. Run pnpm licenses:generate and check it in an app built with pnpm tauri build.",
+
   "theme.label": "Theme",
   "theme.system": "System",
   "theme.light": "Light",

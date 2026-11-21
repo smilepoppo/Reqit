@@ -196,6 +196,16 @@ describe("App", () => {
     }
   });
 
+  it("opens and closes the third-party licenses dialog", async () => {
+    const user = userEvent.setup();
+    setup(async () => undefined);
+    await user.click(await screen.findByRole("button", { name: "ライセンス" }));
+    const dialog = screen.getByRole("dialog", { name: "サードパーティのライセンス" });
+    expect(dialog).toBeInTheDocument();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
   it("switches the UI language to English", async () => {
     const user = userEvent.setup();
     setup(async () => undefined);

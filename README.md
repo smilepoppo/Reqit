@@ -126,4 +126,6 @@ cargo test --workspace                                 # ローカルのモッ�
 
 ## ライセンス
 
-[MIT License](LICENSE)
+Reqit は [MIT License](LICENSE) で公開しています。
+
+Reqit が利用しているオープンソースソフトウェアのライセンス文は、アプリ右上の「ライセンス」から確認できます。各リリースにも `THIRD_PARTY_LICENSES.html` として添付しています。

@@ -12,7 +12,7 @@
 
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 
@@ -66,6 +66,7 @@ async function wd(method, path, body) {
   return json.value;
 }
 const ELEMENT = "element-6066-11e4-a52e-4f735a3d3d2f";
+let elementKey = ELEMENT;
 
 async function session() {
   const v = await wd("POST", "/session", {
@@ -78,7 +79,9 @@ async function find(sid, css, timeoutMs = 10_000) {
   for (;;) {
     try {
       const v = await wd("POST", `/session/${sid}/element`, { using: "css selector", value: css });
-      return v[ELEMENT] ?? Object.values(v)[0];
+      // WebDriver 実装によって要素 ID のキー名が異なるため、返ってきたキーを覚えておく。
+      elementKey = ELEMENT in v ? ELEMENT : Object.keys(v)[0];
+      return v[elementKey];
     } catch (e) {
       if (Date.now() > until) throw e;
       await sleep(100);
@@ -181,7 +184,28 @@ try {
   }
   await screenshot(sid, "04-large.png");
 
-  // 6. 前回入力の復元（保存は 600 ms の遅延後）
+  // 6. サードパーティのライセンス一覧（生成済みのビルドでのみ確認する）
+  if (existsSync("public/third-party-licenses.html")) {
+    await click(sid, await find(sid, "header button"));
+    const frame = await find(sid, 'div[role="dialog"] iframe');
+    await wd("POST", `/session/${sid}/frame`, { id: { [elementKey]: frame } });
+    const heading = await text(sid, await find(sid, "h1"));
+    const body = await text(sid, await find(sid, "body"));
+    await wd("POST", `/session/${sid}/frame`, { id: null });
+    check(
+      "third-party licenses shown",
+      heading.includes("サードパーティのライセンス") &&
+        body.includes("reqwest") &&
+        body.includes("react"),
+      heading,
+    );
+    await screenshot(sid, "05-licenses.png");
+    await click(sid, await find(sid, 'div[role="dialog"] button'));
+  } else {
+    console.log("SKIP third-party licenses (public/third-party-licenses.html not generated)");
+  }
+
+  // 7. 前回入力の復元（保存は 600 ms の遅延後）
   await clearUrl(sid, url);
   await type(sid, url, `${base}/api/users?page=7`);
   await sleep(1500);
