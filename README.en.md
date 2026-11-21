@@ -52,6 +52,35 @@ Reqit is a lightweight desktop app for quick API checks — for the times when l
 
 See [SECURITY.md](SECURITY.md) for details.
 
+## Installation
+
+1. Open [GitHub Releases](https://github.com/smilepoppo/Reqit/releases) and download `Reqit_<version>_x64-setup.exe` from the latest release (an `.msi` package is also available).
+2. Run the installer and follow the instructions. The `setup.exe` installer does not require administrator rights.
+3. To uninstall, go to Windows Settings → Apps → Installed apps.
+
+> [!NOTE]
+> v0.1.0 is being prepared. Until it is published, build from source (see below).
+
+### If you see "Windows protected your PC"
+
+Reqit is not code-signed yet, so Microsoft Defender SmartScreen may show a warning the first time you run it.
+
+1. Verify the downloaded file (see "Verifying downloads" below).
+2. Click "More info" on the warning.
+3. Check that the publisher is shown as "Unknown publisher", then click "Run anyway".
+
+We plan to apply for a free code signing service for open source projects.
+
+### Verifying downloads
+
+Each release includes `SHA256SUMS.txt`. Run the following in PowerShell and check that the hash matches the value in `SHA256SUMS.txt`.
+
+```powershell
+Get-FileHash .\Reqit_0.1.0_x64-setup.exe -Algorithm SHA256
+```
+
+Each release also includes an SBOM (list of libraries used, in SPDX format).
+
 ## Building from source (Windows 11)
 
 Requirements: Microsoft C++ Build Tools, WebView2 Runtime (preinstalled on Windows 11), Rust stable (1.90+), Node.js 22+ and pnpm 10.
