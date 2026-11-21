@@ -11,7 +11,16 @@
 //   ライセンスファイルが見つからないパッケージがあれば、エラーで終了する。
 
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
 const OUT = resolve(process.argv[2] ?? "public/third-party-licenses.html");
@@ -37,9 +46,17 @@ function run(cmd, args) {
 
 // --- Rust -----------------------------------------------------------------
 function rustGroups() {
-  const about = JSON.parse(
-    run("cargo", ["about", "generate", "--workspace", "--fail", "--format", "json"]),
-  );
+  // Windows の PowerShell では cargo-about が標準出力への書き出しを拒否するため、
+  // 一時ファイルに出力してから読み込む。
+  const dir = mkdtempSync(join(tmpdir(), "reqit-about-"));
+  const file = join(dir, "about.json");
+  let about;
+  try {
+    run("cargo", ["about", "generate", "--workspace", "--fail", "--format", "json", "-o", file]);
+    about = JSON.parse(readFileSync(file, "utf8"));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
   return about.licenses.map((l) => ({
     license: l.id,
     text: l.text.trim(),
