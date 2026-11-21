@@ -6,6 +6,7 @@ Thank you for your interest! Issues and pull requests are welcome in either Japa
 
 ## はじめる前に
 
+- 参加するすべての方に、[行動規範](CODE_OF_CONDUCT.md) を守っていただくようお願いします。
 - 大きな変更（新機能、設計の変更、依存ライブラリの追加）は、先に Issue で相談してください。
 - 設計方針は [docs/architecture.md](docs/architecture.md)、開発ルールは [CLAUDE.md](CLAUDE.md) にまとめています。AI エージェントだけでなく、人間のコントリビューターにも同じルールを適用します。
 

@@ -3,3 +3,6 @@ contact_links:
   - name: 脆弱性の報告 / Security vulnerability
     url: https://github.com/smilepoppo/Reqit/security/advisories/new
     about: 脆弱性は公開 Issue ではなく、非公開で報告してください。 / Please report privately.
+  - name: 行動規範に関する報告 / Code of Conduct report
+    url: https://github.com/smilepoppo/Reqit/blob/main/CODE_OF_CONDUCT.md
+    about: 報告の方法は行動規範を参照してください。公開 Issue には書かないでください。 / See the Code of Conduct for how to report privately.
