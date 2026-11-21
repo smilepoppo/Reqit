@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+/* OS 設定ではなく <html class="dark"> でダークモードを切り替える（useTheme が付け外しする）。 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    font-family:
+      "Segoe UI",
+      "Yu Gothic UI",
+      "Meiryo",
+      system-ui,
+      -apple-system,
+      "Hiragino Sans",
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-indigo-500);
+    outline-offset: 1px;
+  }
+}

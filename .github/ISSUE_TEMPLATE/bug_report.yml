@@ -1,0 +1,43 @@
+name: 不具合の報告 / Bug report
+description: Reqit の不具合を報告する / Report a bug
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        報告の前に、トークン・パスワード・社内 URL・個人情報が含まれていないか確認してください。
+        Please make sure the report contains no tokens, passwords, internal URLs or personal data.
+        セキュリティ上の問題は Issue ではなく、SECURITY.md の手順で報告してください。
+  - type: textarea
+    id: what
+    attributes:
+      label: 何が起きたか / What happened
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順 / Steps to reproduce
+      placeholder: |
+        1. https://api.example.com/users に GET を送信
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待した動作 / Expected behavior
+  - type: input
+    id: version
+    attributes:
+      label: Reqit のバージョン / Version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: "Windows 11 24H2"
+    validations:
+      required: true
