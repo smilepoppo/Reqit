@@ -50,7 +50,7 @@ Reqit is a lightweight desktop app for quick API checks — for the times when l
 - TLS certificates are always verified.
 - `Authorization` and `Cookie` headers are dropped automatically on cross-host redirects.
 
-See [SECURITY.md](SECURITY.md) for details.
+See [SECURITY.md](.github/SECURITY.md) for details.
 
 ## Installation
 
@@ -102,7 +102,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace                                 # tests against local mock servers
 ```
 
-Architecture: [docs/architecture.md](docs/architecture.md) (Japanese). Roadmap and progress: [docs/plan.md](docs/plan.md). Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md).
+Architecture: [docs/architecture.md](docs/architecture.md) (Japanese). Roadmap and progress: [docs/plan.md](docs/plan.md). Contribution guide: [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
 ## Roadmap
 

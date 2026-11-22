@@ -1,5 +1,5 @@
 # cargo-about 設定：配布物に含める Rust 依存ライブラリのライセンス文を集める。
-# 許可するライセンスは deny.toml と同じにする。
+# 許可するライセンスは .config/deny.toml と同じにする。
 accepted = [
   "MIT",
   "Apache-2.0",

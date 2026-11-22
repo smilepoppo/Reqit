@@ -7,7 +7,7 @@ body:
       value: |
         報告の前に、トークン・パスワード・社内 URL・個人情報が含まれていないか確認してください。
         Please make sure the report contains no tokens, passwords, internal URLs or personal data.
-        セキュリティ上の問題は Issue ではなく、SECURITY.md の手順で報告してください。
+        セキュリティ上の問題は Issue ではなく、.github/SECURITY.md の手順で報告してください。
   - type: textarea
     id: what
     attributes:

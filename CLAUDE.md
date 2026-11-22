@@ -24,7 +24,9 @@ Claude Code（および他の AI エージェント）が Reqit を開発する�
 | `src/`               | React フロントエンド。HTTP 通信は直接行わず、`src/lib/ipc.ts` 経由で Rust に依頼する |
 | `src/i18n/`          | UI 文言の辞書（`ja.ts` が標準、`en.ts` は型で同じキーを強制）                        |
 | `docs/`              | 設計資料、計画、技術検証の記録                                                       |
-| `scripts/`           | 開発補助（E2E スモークテストなど）                                                   |
+| `scripts/`           | 開発補助（E2E スモークテスト、ライセンス一覧の生成など）                             |
+| `.config/`           | 検査ツールの設定（cargo-deny、cargo-about、gitleaks）                                |
+| `.github/`           | CI、Issue・PR テンプレート、CONTRIBUTING・SECURITY・CODE_OF_CONDUCT                  |
 
 ## よく使うコマンド
 
@@ -36,7 +38,7 @@ cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 pnpm secrets:scan            # gitleaks（要インストール）
-cargo audit && cargo deny check licenses bans sources
+cargo audit && cargo deny --config .config/deny.toml check licenses bans sources
 pnpm licenses:generate       # サードパーティのライセンス一覧を生成（要 cargo-about）
 ```
 
