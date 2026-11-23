@@ -8,11 +8,11 @@ Thank you for your interest! Issues and pull requests are welcome in either Japa
 
 - 参加するすべての方に、[行動規範](CODE_OF_CONDUCT.md) を守っていただくようお願いします。
 - 大きな変更（新機能、設計の変更、依存ライブラリの追加）は、先に Issue で相談してください。
-- 設計方針は [docs/architecture.md](docs/architecture.md)、開発ルールは [CLAUDE.md](CLAUDE.md) にまとめています。AI エージェントだけでなく、人間のコントリビューターにも同じルールを適用します。
+- 設計方針は [docs/architecture.md](../docs/architecture.md)、開発ルールは [CLAUDE.md](../CLAUDE.md) にまとめています。AI エージェントだけでなく、人間のコントリビューターにも同じルールを適用します。
 
 ## 開発環境
 
-[README.md](README.md#ソースからのビルドwindows-11) の「ソースからのビルド」を参照してください。Linux でも開発やテストはできます（WebKitGTK が必要です）。
+[README.md](../README.md#ソースからのビルドwindows-11) の「ソースからのビルド」を参照してください。Linux でも開発やテストはできます（WebKitGTK が必要です）。
 
 ## Pull Request の前に
 
@@ -34,4 +34,4 @@ pnpm secrets:scan   # gitleaks が必要
 
 ## ライセンス
 
-コントリビュートしたコードは、[MIT License](LICENSE) で公開されることに同意したものとみなします。
+コントリビュートしたコードは、[MIT License](../LICENSE) で公開されることに同意したものとみなします。

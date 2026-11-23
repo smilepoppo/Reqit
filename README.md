@@ -56,7 +56,7 @@ Reqit は、Postman を起動するほどではない API の動作確認を、�
 - TLS 証明書は常に検証します。
 - 別のホストへリダイレクトされた場合、`Authorization` や `Cookie` ヘッダーは自動で取り除かれます。
 
-詳しくは [SECURITY.md](SECURITY.md) を参照してください。
+詳しくは [SECURITY.md](.github/SECURITY.md) を参照してください。
 
 ## インストール
 
@@ -115,7 +115,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace                                 # ローカルのモックサーバーで通信を検証
 ```
 
-設計は [docs/architecture.md](docs/architecture.md)、今後の計画は [docs/plan.md](docs/plan.md) にまとめています。コントリビュートの方法は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+設計は [docs/architecture.md](docs/architecture.md)、今後の計画は [docs/plan.md](docs/plan.md) にまとめています。コントリビュートの方法は [CONTRIBUTING.md](.github/CONTRIBUTING.md) を参照してください。
 
 ## ロードマップ
 

@@ -24,7 +24,7 @@ MIT・Apache-2.0 などのライセンスは、配布物に著作権表示とラ
 - アプリ本体（画面右上の「ライセンス」から表示）
 - GitHub Releases の `THIRD_PARTY_LICENSES.html`
 
-生成には `cargo-about`（`cargo install cargo-about --locked --features cli`）を使います。対象とするライセンスは `about.toml` で、`deny.toml` と同じものだけを許可しています。新しい依存ライブラリを追加したときは、手元で `pnpm licenses:generate` を実行して、エラーにならないことを確認してください。
+生成には `cargo-about`（`cargo install cargo-about --locked --features cli`）を使います。対象とするライセンスは `.config/about.toml` で、`.config/deny.toml` と同じものだけを許可しています。新しい依存ライブラリを追加したときは、手元で `pnpm licenses:generate` を実行して、エラーにならないことを確認してください。
 
 ## 手順
 

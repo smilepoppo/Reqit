@@ -2,7 +2,7 @@
 // 配布物に含まれるサードパーティのライセンス文を 1 つの HTML にまとめる。
 //
 // - Rust：cargo-about（`cargo install cargo-about --locked --features cli`）で、
-//   Windows 版に含まれる crate のライセンス文を集める（about.toml を参照）
+//   Windows 版に含まれる crate のライセンス文を集める（.config/about.toml を参照）
 // - JavaScript：本番依存（pnpm licenses --prod）と、出力がアプリに含まれる
 //   ビルドツール（Tailwind CSS）のライセンスファイルを読む
 //
@@ -52,7 +52,18 @@ function rustGroups() {
   const file = join(dir, "about.json");
   let about;
   try {
-    run("cargo", ["about", "generate", "--workspace", "--fail", "--format", "json", "-o", file]);
+    run("cargo", [
+      "about",
+      "generate",
+      "--workspace",
+      "--fail",
+      "-c",
+      ".config/about.toml",
+      "--format",
+      "json",
+      "-o",
+      file,
+    ]);
     about = JSON.parse(readFileSync(file, "utf8"));
   } finally {
     rmSync(dir, { recursive: true, force: true });
