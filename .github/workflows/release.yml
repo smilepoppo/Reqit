@@ -51,7 +51,7 @@ jobs:
       # ライセンス一覧の同梱は配布の条件のため、生成に失敗したらリリースを止める
       - name: Generate third-party licenses
         run: pnpm licenses:generate
-      - uses: tauri-apps/tauri-action@2d793bf2c8c505b9b76211601b09aab48922225d # v1.0.0
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # 自動更新（アップデーター）を導入する場合は、更新ファイル用の署名鍵を
