@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LicensesDialog } from "./components/LicensesDialog";
+import { Notice, type NoticeData } from "./components/Notice";
 import { RequestBar } from "./components/RequestBar";
 import { RequestPanel } from "./components/RequestPanel";
 import { ResponsePanel } from "./components/ResponsePanel";
@@ -7,8 +8,10 @@ import { useI18n, type Lang } from "./i18n";
 import { usePersistentDraft } from "./hooks/usePersistentDraft";
 import { useRequestRunner } from "./hooks/useRequestRunner";
 import { useTheme, type ThemePref } from "./hooks/useTheme";
-import { applyUrlChange, draftToSpec } from "./lib/draft";
-import { isTauri } from "./lib/ipc";
+import { curlErrorMessage, curlWarningMessage } from "./lib/curl";
+import { applyUrlChange, draftToSpec, specToDraft } from "./lib/draft";
+import { exportCurl, isTauri, looksLikeCurl, parseCurl } from "./lib/ipc";
+import type { CurlError, CurlStyle } from "./lib/types";
 
 const selectClass =
   "rounded border border-slate-300 bg-transparent px-1.5 py-0.5 text-xs dark:border-slate-700 dark:bg-slate-900";
@@ -21,6 +24,44 @@ export default function App() {
   const urlRef = useRef<HTMLInputElement>(null);
   const [showLicenses, setShowLicenses] = useState(false);
   const closeLicenses = useCallback(() => setShowLicenses(false), []);
+  const [notice, setNotice] = useState<NoticeData | null>(null);
+
+  const importCurl = useCallback(
+    async (text: string) => {
+      try {
+        const { spec, warnings } = await parseCurl(text);
+        update((d) => ({ ...specToDraft(spec), timeoutSec: d.timeoutSec }));
+        const lines = [
+          t("curl.imported"),
+          ...warnings.map((w) => {
+            const m = curlWarningMessage(w);
+            return t(m.key, m.params);
+          }),
+        ];
+        setNotice({ tone: warnings.length ? "warn" : "info", lines });
+      } catch (e) {
+        const m = curlErrorMessage(e as CurlError);
+        setNotice({
+          tone: "error",
+          lines: [t("curl.importFailed", { reason: t(m.key, m.params) })],
+        });
+      }
+    },
+    [t, update],
+  );
+
+  const copyCurl = useCallback(
+    async (style: CurlStyle) => {
+      try {
+        const text = await exportCurl(draftToSpec(draft), style);
+        await navigator.clipboard.writeText(text);
+        setNotice({ tone: "info", lines: [t("curl.copied")] });
+      } catch (e) {
+        setNotice({ tone: "error", lines: [String(e)] });
+      }
+    },
+    [draft, t],
+  );
 
   const doSend = useCallback(() => {
     void send(draftToSpec(draft));
@@ -102,12 +143,30 @@ export default function App() {
           onUrlChange={(url) => update((d) => applyUrlChange(d, url))}
           onSend={doSend}
           onCancel={cancel}
+          onUrlPaste={(e) => {
+            const text = e.clipboardData.getData("text/plain") || e.clipboardData.getData("text");
+            if (looksLikeCurl(text)) {
+              e.preventDefault();
+              void importCurl(text);
+            }
+          }}
         />
+        {notice && (
+          <div className="mt-2">
+            <Notice notice={notice} onClose={() => setNotice(null)} />
+          </div>
+        )}
       </div>
 
       <main className="grid min-h-0 flex-1 grid-rows-2 gap-3 px-4 pb-4 lg:grid-cols-2 lg:grid-rows-1">
         <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/60">
-          <RequestPanel draft={draft} update={update} dark={dark} secretStatus={secretStatus} />
+          <RequestPanel
+            draft={draft}
+            update={update}
+            dark={dark}
+            secretStatus={secretStatus}
+            onCopyCurl={(style) => void copyCurl(style)}
+          />
         </div>
         <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/60">
           <ResponsePanel state={state} dark={dark} />

@@ -62,3 +62,25 @@ export type SecretPersistence = "none" | "stored" | "tooLarge" | "unavailable";
 export interface SaveOutcome {
   secrets: SecretPersistence;
 }
+
+// curl のインポート / エクスポート（crates/reqit-core/src/curl.rs と対応）
+export type CurlStyle = "bash" | "cmd";
+
+export type CurlWarning =
+  | { kind: "unknownOption"; option: string }
+  | { kind: "insecureIgnored" }
+  | { kind: "fileReferenceIgnored"; option: string }
+  | { kind: "multipartIgnored" };
+
+export type CurlError =
+  | { kind: "notCurl" }
+  | { kind: "unterminatedQuote" }
+  | { kind: "missingValue"; option: string }
+  | { kind: "missingUrl" }
+  | { kind: "invalidUrl" }
+  | { kind: "unsupportedMethod"; method: string };
+
+export interface ParsedCurl {
+  spec: RequestSpec;
+  warnings: CurlWarning[];
+}

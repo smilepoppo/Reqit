@@ -10,6 +10,26 @@ export const en: Record<keyof typeof ja, string> = {
   "about.licensesDev":
     "Not available in development mode. Run pnpm licenses:generate and check it in an app built with pnpm tauri build.",
 
+  "curl.imported": "Imported the curl command.",
+  "curl.importFailed": "Could not import the curl command. {reason}",
+  "curl.warn.unknownOption": 'Ignored unsupported option "{option}".',
+  "curl.warn.insecureIgnored":
+    "Ignored -k (--insecure). Reqit never disables TLS certificate verification.",
+  "curl.warn.fileReferenceIgnored": 'Ignored the file reference (@file) in "{option}".',
+  "curl.warn.multipartIgnored": "Ignored form uploads (-F), which are not supported yet.",
+  "curl.err.notCurl": "Paste a command that starts with curl.",
+  "curl.err.unterminatedQuote": "A quote is not closed. Make sure you copied the whole command.",
+  "curl.err.missingValue": 'Option "{option}" has no value.',
+  "curl.err.missingUrl": "No URL was found.",
+  "curl.err.invalidUrl": "The URL is not valid.",
+  "curl.err.unsupportedMethod": 'HTTP method "{method}" is not supported.',
+  "curl.copy": "Copy as curl",
+  "curl.copyBash": "Copy as bash",
+  "curl.copyCmd": "Copy as cmd (Windows)",
+  "curl.copied":
+    "Copied the curl command. It may contain credentials, so be careful when sharing it.",
+  "notice.close": "Close",
+
   "theme.label": "Theme",
   "theme.system": "System",
   "theme.light": "Light",
@@ -18,7 +38,7 @@ export const en: Record<keyof typeof ja, string> = {
 
   "request.method": "HTTP method",
   "request.url": "URL",
-  "request.urlPlaceholder": "Enter a URL, e.g. https://api.example.com/users (Ctrl+L)",
+  "request.urlPlaceholder": "Enter a URL or paste a curl command (Ctrl+L)",
   "request.send": "Send",
   "request.cancel": "Cancel",
   "request.sendHint": "Ctrl+Enter to send",

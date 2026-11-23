@@ -2,7 +2,15 @@
 // HTTP 通信は必ずここから Rust の Request Engine に依頼する（UI から fetch しない）。
 
 import { invoke, isTauri } from "@tauri-apps/api/core";
-import type { EngineError, RequestSpec, ResponseData, SaveOutcome } from "./types";
+import type {
+  CurlError,
+  CurlStyle,
+  EngineError,
+  ParsedCurl,
+  RequestSpec,
+  ResponseData,
+  SaveOutcome,
+} from "./types";
 
 export { isTauri };
 
@@ -53,4 +61,22 @@ export function loadLastRequest(): Promise<RequestSpec | null> {
 
 export function saveLastRequest(spec: RequestSpec): Promise<SaveOutcome> {
   return invoke<SaveOutcome>("save_last_request", { spec });
+}
+
+/** curl コマンドかどうかを判定する（貼り付け時の自動読み込みに使う）。 */
+export function looksLikeCurl(text: string): boolean {
+  return /^\s*curl(\.exe)?\s/i.test(text);
+}
+
+export async function parseCurl(input: string): Promise<ParsedCurl> {
+  try {
+    return await invoke<ParsedCurl>("parse_curl", { input });
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "kind" in e) throw e as CurlError;
+    throw { kind: "notCurl" } satisfies CurlError;
+  }
+}
+
+export function exportCurl(spec: RequestSpec, style: CurlStyle): Promise<string> {
+  return invoke<string>("export_curl", { spec, style });
 }

@@ -184,6 +184,42 @@ try {
   }
   await screenshot(sid, "04-large.png");
 
+  // 5b. curl の貼り付けで読み込み（IPC の権限設定も含めて確認する）
+  await clearUrl(sid, url);
+  await wd("POST", `/session/${sid}/execute/sync`, {
+    script: `const input = document.querySelector('input[aria-label="URL"]');
+      const dt = new DataTransfer();
+      dt.setData("text/plain", arguments[0]);
+      input.focus();
+      input.dispatchEvent(new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true }));`,
+    args: [`curl '${base}/api/users?page=5' -H 'X-Test: yes' --data-raw '{"a":1}'`],
+  });
+  await sleep(500);
+  const imported = await prop(sid, url, "value");
+  const method = await prop(sid, await find(sid, 'select[aria-label="HTTPメソッド"]'), "value");
+  check(
+    "curl import via paste",
+    imported === `${base}/api/users?page=5` && method === "POST",
+    `${method} ${imported}`,
+  );
+
+  // 5c. curl としてコピー（エクスポート）
+  await wd("POST", `/session/${sid}/execute/sync`, {
+    script: `const s = document.querySelector('select[aria-label="curl をコピー"]');
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value").set;
+      setter.call(s, "bash");
+      s.dispatchEvent(new Event("change", { bubbles: true }));`,
+    args: [],
+  });
+  await sleep(500);
+  const noticeText = await text(sid, await find(sid, '[role="status"], [role="alert"]'));
+  check(
+    "curl export",
+    noticeText.includes("curl コマンドをコピーしました"),
+    noticeText.split("\n")[0],
+  );
+  await screenshot(sid, "06-curl.png");
+
   // 6. サードパーティのライセンス一覧（生成済みのビルドでのみ確認する）
   if (existsSync("public/third-party-licenses.html")) {
     await click(sid, await find(sid, "header button"));
