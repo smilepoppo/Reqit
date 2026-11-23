@@ -12,6 +12,28 @@ export const ja = {
   "about.licensesDev":
     "開発モードでは表示できません。pnpm licenses:generate で生成したあと、pnpm tauri build でビルドしたアプリで確認してください。",
 
+  "curl.imported": "curl コマンドを読み込みました。",
+  "curl.importFailed": "curl コマンドを読み込めませんでした。{reason}",
+  "curl.warn.unknownOption": "未対応のオプション「{option}」は無視しました。",
+  "curl.warn.insecureIgnored":
+    "-k（--insecure）は無視しました。Reqit は TLS 証明書の検証を無効にしません。",
+  "curl.warn.fileReferenceIgnored":
+    "「{option}」のファイル指定（@ファイル名）は読み込めないため、無視しました。",
+  "curl.warn.multipartIgnored": "フォーム送信（-F）には対応していないため、無視しました。",
+  "curl.err.notCurl": "curl で始まるコマンドを貼り付けてください。",
+  "curl.err.unterminatedQuote":
+    "引用符が閉じられていません。コマンドの最後までコピーできているか確認してください。",
+  "curl.err.missingValue": "オプション「{option}」の値がありません。",
+  "curl.err.missingUrl": "URL が見つかりません。",
+  "curl.err.invalidUrl": "URL の形式が正しくありません。",
+  "curl.err.unsupportedMethod": "HTTP メソッド「{method}」には対応していません。",
+  "curl.copy": "curl をコピー",
+  "curl.copyBash": "bash 形式でコピー",
+  "curl.copyCmd": "cmd 形式（Windows）でコピー",
+  "curl.copied":
+    "curl コマンドをコピーしました。認証情報が含まれる場合があるため、共有するときは注意してください。",
+  "notice.close": "閉じる",
+
   "theme.label": "テーマ",
   "theme.system": "OSに合わせる",
   "theme.light": "ライト",
@@ -20,7 +42,7 @@ export const ja = {
 
   "request.method": "HTTPメソッド",
   "request.url": "URL",
-  "request.urlPlaceholder": "https://api.example.com/users を入力（Ctrl+L）",
+  "request.urlPlaceholder": "URL を入力、または curl コマンドを貼り付け（Ctrl+L）",
   "request.send": "送信",
   "request.cancel": "キャンセル",
   "request.sendHint": "Ctrl+Enter で送信",

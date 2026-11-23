@@ -206,6 +206,60 @@ describe("App", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("imports a pasted curl command into the request", async () => {
+    const user = userEvent.setup();
+    setup(async (cmd, args) => {
+      if (cmd === "parse_curl") {
+        expect(args.input).toContain("curl ");
+        return {
+          spec: {
+            method: "POST",
+            url: "https://api.example.com/items",
+            query: [{ key: "lang", value: "ja", enabled: true }],
+            headers: [{ key: "accept", value: "*/*", enabled: true }],
+            body: { type: "json", text: '{"a":1}' },
+            auth: { type: "none" },
+            timeoutMs: 30000,
+          },
+          warnings: [{ kind: "insecureIgnored" }],
+        };
+      }
+    });
+    const url = await screen.findByLabelText("URL");
+    await user.click(url);
+    await user.paste("curl -k 'https://api.example.com/items?lang=ja' --data-raw '{\"a\":1}'");
+    await waitFor(() => expect(url).toHaveValue("https://api.example.com/items?lang=ja"));
+    expect(screen.getByLabelText("HTTPメソッド")).toHaveValue("POST");
+    const status = screen.getByRole("status", { name: "" });
+    expect(status).toHaveTextContent("curl コマンドを読み込みました。");
+    expect(status).toHaveTextContent("TLS 証明書の検証を無効にしません");
+  });
+
+  it("shows a readable error for an invalid curl command", async () => {
+    const user = userEvent.setup();
+    setup(async (cmd) => {
+      if (cmd === "parse_curl") throw { kind: "unterminatedQuote" };
+    });
+    await user.click(await screen.findByLabelText("URL"));
+    await user.paste("curl 'https://example.com");
+    expect(await screen.findByRole("alert")).toHaveTextContent("引用符が閉じられていません");
+  });
+
+  it("copies the request as a curl command", async () => {
+    const user = userEvent.setup();
+    setup(async (cmd, args) => {
+      if (cmd === "export_curl") {
+        expect(args.style).toBe("cmd");
+        return 'curl ^"https://example.com/^"';
+      }
+    });
+    await user.type(await screen.findByLabelText("URL"), "https://example.com/");
+    await user.selectOptions(screen.getByLabelText("curl をコピー"), "cmd");
+    await waitFor(() => expect(callsTo("export_curl")).toHaveLength(1));
+    expect(await navigator.clipboard.readText()).toBe('curl ^"https://example.com/^"');
+    expect(screen.getByText(/curl コマンドをコピーしました/)).toBeInTheDocument();
+  });
+
   it("switches the UI language to English", async () => {
     const user = userEvent.setup();
     setup(async () => undefined);

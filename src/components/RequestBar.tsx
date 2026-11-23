@@ -1,4 +1,4 @@
-import type { Ref } from "react";
+import type { ClipboardEvent, Ref } from "react";
 import { useI18n } from "../i18n";
 import { HTTP_METHODS, type HttpMethod } from "../lib/types";
 
@@ -11,6 +11,7 @@ interface Props {
   onSend: () => void;
   onCancel: () => void;
   urlRef?: Ref<HTMLInputElement>;
+  onUrlPaste?: (e: ClipboardEvent<HTMLInputElement>) => void;
 }
 
 const methodColor: Record<HttpMethod, string> = {
@@ -30,6 +31,7 @@ export function RequestBar({
   onSend,
   onCancel,
   urlRef,
+  onUrlPaste,
 }: Props) {
   const { t } = useI18n();
   return (
@@ -62,6 +64,7 @@ export function RequestBar({
           type="text"
           value={url}
           onChange={(e) => onUrlChange(e.target.value)}
+          onPaste={onUrlPaste}
           placeholder={t("request.urlPlaceholder")}
           aria-label={t("request.url")}
           autoFocus

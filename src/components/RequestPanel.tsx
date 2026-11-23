@@ -8,7 +8,7 @@ import {
   type Draft,
 } from "../lib/draft";
 import { checkJson, formatJsonText } from "../lib/format";
-import type { KeyValue, SecretPersistence } from "../lib/types";
+import type { CurlStyle, KeyValue, SecretPersistence } from "../lib/types";
 import { urlFromRows } from "../lib/url";
 import { CodeEditor } from "./CodeEditor";
 import { KeyValueEditor } from "./KeyValueEditor";
@@ -21,6 +21,7 @@ interface Props {
   update: (fn: (d: Draft) => Draft) => void;
   dark: boolean;
   secretStatus: SecretPersistence;
+  onCopyCurl: (style: CurlStyle) => void;
 }
 
 function countEnabled(rows: KeyValue[]): number {
@@ -110,7 +111,7 @@ function SecretInput({
   );
 }
 
-export function RequestPanel({ draft, update, dark, secretStatus }: Props) {
+export function RequestPanel({ draft, update, dark, secretStatus, onCopyCurl }: Props) {
   const { t } = useI18n();
   const [tab, setTab] = useState<TabId>("params");
   const jsonCheck =
@@ -142,7 +143,29 @@ export function RequestPanel({ draft, update, dark, secretStatus }: Props) {
 
   return (
     <section className="flex min-h-0 flex-1 flex-col" aria-label="Request">
-      <Tabs items={tabs} active={tab} onChange={setTab} label="Request" idPrefix="req" />
+      <Tabs
+        items={tabs}
+        active={tab}
+        onChange={setTab}
+        label="Request"
+        idPrefix="req"
+        trailing={
+          <select
+            aria-label={t("curl.copy")}
+            value=""
+            onChange={(e) => {
+              const style = e.target.value as CurlStyle;
+              e.target.value = "";
+              if (style) onCopyCurl(style);
+            }}
+            className="mr-2 w-28 shrink-0 rounded border border-slate-300 bg-transparent px-1 py-0.5 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+          >
+            <option value="">{t("curl.copy")}</option>
+            <option value="bash">{t("curl.copyBash")}</option>
+            <option value="cmd">{t("curl.copyCmd")}</option>
+          </select>
+        }
+      />
       <div
         id="req-panel"
         role="tabpanel"

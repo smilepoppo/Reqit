@@ -5,6 +5,7 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 
+use reqit_core::curl::{self, CurlError, CurlStyle, ParsedCurl};
 use reqit_core::draft::{DraftStore, SaveOutcome};
 use reqit_core::{CancellationToken, Engine, EngineError, RequestSpec, ResponseData};
 use tauri::State;
@@ -92,6 +93,18 @@ pub async fn save_last_request(
     tauri::async_runtime::spawn_blocking(move || drafts.save(&spec, &KeyringSecretStore))
         .await
         .map_err(|e| e.to_string())?
+}
+
+/// curl コマンドを読み込む。通信は行わない。
+#[tauri::command]
+pub fn parse_curl(input: String) -> Result<ParsedCurl, CurlError> {
+    curl::parse_curl(&input)
+}
+
+/// リクエストを curl コマンドに変換する。通信は行わない。
+#[tauri::command]
+pub fn export_curl(spec: RequestSpec, style: CurlStyle) -> String {
+    curl::to_curl(&spec, style)
 }
 
 #[cfg(test)]

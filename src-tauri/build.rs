@@ -6,6 +6,8 @@ fn main() {
             "cancel_request",
             "load_last_request",
             "save_last_request",
+            "parse_curl",
+            "export_curl",
         ]),
     ))
     .expect("failed to run tauri-build");

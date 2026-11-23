@@ -33,6 +33,7 @@ Reqit is a lightweight desktop app for quick API checks — for the times when l
 | Auth     | Basic, Bearer token                                                                                         |
 | Response | Status, headers, pretty view with JSON highlighting, raw view, timing, size                                 |
 | Errors   | DNS / connection / TLS / timeout errors and HTTP status hints, explained in Japanese or English             |
+| curl     | Paste "Copy as cURL" from browser dev tools into the URL bar to import; copy requests as curl (bash / cmd)  |
 | Workflow | Cancel in-flight requests, timeout setting, automatic restore of the last request, dark / light mode        |
 
 ### Keyboard shortcuts

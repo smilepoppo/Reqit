@@ -28,6 +28,8 @@ pub fn run() {
             commands::cancel_request,
             commands::load_last_request,
             commands::save_last_request,
+            commands::parse_curl,
+            commands::export_curl,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Reqit");

@@ -7,6 +7,8 @@
     "allow-send-request",
     "allow-cancel-request",
     "allow-load-last-request",
-    "allow-save-last-request"
+    "allow-save-last-request",
+    "allow-parse-curl",
+    "allow-export-curl"
   ]
 }
