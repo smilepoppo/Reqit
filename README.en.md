@@ -58,9 +58,6 @@ See [SECURITY.md](.github/SECURITY.md) for details.
 2. Run the installer and follow the instructions. The `setup.exe` installer does not require administrator rights.
 3. To uninstall, go to Windows Settings → Apps → Installed apps.
 
-> [!NOTE]
-> v0.1.0 is being prepared. Until it is published, build from source (see below).
-
 ### If you see "Windows protected your PC"
 
 Reqit is not code-signed yet, so Microsoft Defender SmartScreen may show a warning the first time you run it.
